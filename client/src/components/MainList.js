@@ -2,22 +2,21 @@ import React, { Component } from "react";
 import { Container, ListGroup, ListGroupItem, Button } from "reactstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import uuid from "uuid";
-export default class MainList extends Component {
-  state = {
-    items: [
-      { id: uuid(), name: "Eggs" },
-      { id: uuid(), name: "Milk" },
-      { id: uuid(), name: "buttter" },
-      { id: uuid(), name: "bread" }
-    ]
-  };
+import { connect } from "react-redux";
+import { getItems } from "../actions/itemActions";
+import PropTypes from "prop-types";
+class MainList extends Component {
+  componentDidMount() {
+    this.props.getItems();
+  }
+
   render() {
-    const { items } = this.state;
+    const { items } = this.props.item;
     return (
       <Container>
         <Button
           color="success"
-          style={{ marginBottom: "2rem"}}
+          style={{ marginBottom: "2rem" }}
           onClick={() => {
             const name = prompt("enter item");
             if (name) {
@@ -43,7 +42,8 @@ export default class MainList extends Component {
                         items: state.items.filter(item => item.id !== id)
                       }));
                     }}
-                  >&times;
+                  >
+                    &times;
                   </Button>{" "}
                   {name}
                 </ListGroupItem>
@@ -55,3 +55,14 @@ export default class MainList extends Component {
     );
   }
 }
+
+MainList.propTypes = {
+  getItems: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired
+};
+
+const mapStatetoProps = state => ({
+  item: state.item
+});
+
+export default connect(mapStatetoProps, { getItems })(MainList);
